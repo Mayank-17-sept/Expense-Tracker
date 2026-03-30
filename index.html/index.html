@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            height: fit-content;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: #1a1a2e;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        h3 {
+            margin: 20px 0 10px;
+            color: #1a1a2e;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #4f46e5;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4f46e5, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .add-btn:hover {
+            opacity: 0.9;
+        }
+
+        .total-box {
+            background: linear-gradient(135deg, #4f46e5, #764ba2);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .total-box p {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: 4px;
+        }
+
+        .total-box h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        li {
+            background-color: #f8f9ff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .expense-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .expense-desc {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .expense-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .expense-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .expense-amount {
+            font-weight: 700;
+            color: #4f46e5;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .delete-btn {
+            background-color: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .tag-Food { background: #dcfce7; color: #16a34a; }
+        .tag-Travel { background: #dbeafe; color: #2563eb; }
+        .tag-Shopping { background: #fef9c3; color: #ca8a04; }
+        .tag-Other { background: #f3e8ff; color: #9333ea; }
+
+        .summary-box {
+            background-color: #f8f9ff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 10px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #333;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .total-box h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>💸 Expense Tracker</h1>
+            <p>Track your daily spending easily</p>
+        </div>
+
+        <div class="total-box">
+            <p>Total Spent</p>
+            <h2>₹<span id="total">0.00</span></h2>
+        </div>
+
+        <form>
+            <input type="text" id="description" placeholder="Description" />
+            <input type="number" id="amount" placeholder="Amount (₹)" />
+            <input type="date" id="date" />
+            <select id="category">
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Other">Other</option>
+            </select>
+            <button class="add-btn" type="button" onclick="addExpense()">+ Add Expense</button>
+        </form>
+
+        <h3>Filter by Category</h3>
+        <select id="filter" onchange="filterExpenses()">
+            <option value="All">All</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <ul id="expense-list"></ul>
+
+        <h3>Category Breakdown</h3>
+        <div class="summary-box" id="summary"></div>
+
+    </div>
+
+    <script>
+        let totalAmount = 0;
+        let expenses = [];
+
+        function addExpense() {
+            const description = document.getElementById("description").value;
+            const amount = parseFloat(document.getElementById("amount").value);
+            const date = document.getElementById("date").value;
+            const category = document.getElementById("category").value;
+
+            if (description === "" || isNaN(amount) || date === "") {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            expenses.push({ description, amount, date, category });
+            totalAmount += amount;
+            document.getElementById("total").textContent = totalAmount.toFixed(2);
+
+            document.getElementById("description").value = "";
+            document.getElementById("amount").value = "";
+            document.getElementById("date").value = "";
+
+            filterExpenses();
+            updateSummary();
+        }
+
+        function filterExpenses() {
+            const filter = document.getElementById("filter").value;
+            const list = document.getElementById("expense-list");
+            list.innerHTML = "";
+
+            const filtered = filter === "All" ? expenses : expenses.filter(e => e.category === filter);
+
+            filtered.forEach((exp, index) => {
+                const actualIndex = expenses.indexOf(exp);
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <div class="expense-info">
+                        <span class="expense-desc">${exp.description}</span>
+                        <span class="expense-meta">${exp.date} &nbsp;<span class="tag tag-${exp.category}">${exp.category}</span></span>
+                    </div>
+                    <div class="expense-right">
+                        <span class="expense-amount">₹${exp.amount.toFixed(2)}</span>
+                        <button class="delete-btn" onclick="deleteExpense(${actualIndex})">Delete</button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function deleteExpense(index) {
+            totalAmount -= expenses[index].amount;
+            document.getElementById("total").textContent = totalAmount.toFixed(2);
+            expenses.splice(index, 1);
+            filterExpenses();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summary = {};
+            expenses.forEach(exp => {
+                summary[exp.category] = (summary[exp.category] || 0) + exp.amount;
+            });
+
+            const summaryBox = document.getElementById("summary");
+            summaryBox.innerHTML = "";
+
+            if (Object.keys(summary).length === 0) {
+                summaryBox.innerHTML = "<p style='font-size:14px; color:#999;'>No expenses yet.</p>";
+                return;
+            }
+
+            for (const [cat, amt] of Object.entries(summary)) {
+                const row = document.createElement("div");
+                row.className = "summary-row";
+                row.innerHTML = `<span><span class="tag tag-${cat}">${cat}</span></span><span>₹${amt.toFixed(2)}</span>`;
+                summaryBox.appendChild(row);
+            }
+        }
+
+        updateSummary();
+    </script>
+
+</body>
+</html>
